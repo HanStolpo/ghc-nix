@@ -1,5 +1,5 @@
 { inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/22.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/23.05";
 
     flake-utils.url = "github:numtide/flake-utils/v1.0.0";
   };
@@ -7,7 +7,7 @@
   outputs = { nixpkgs, flake-utils, ... }:
     flake-utils.lib.eachDefaultSystem (system:
       let
-        compiler = "ghc922";
+        compiler = "ghc945";
 
         config = { };
 
@@ -17,10 +17,15 @@
               "${compiler}" = super.haskell.packages."${compiler}".override (old: {
                 overrides =
                   self.lib.composeExtensions
+                  (self.lib.composeExtensions
                     (old.overrides or (_: _: { }))
                     (self.haskell.lib.packageSourceOverrides {
                       ghc-nix = ./ghc-nix;
-                    });
+                    })
+                  )
+                  (final: prev: with self.haskell.lib; {
+                    chell = doJailbreak prev.chell;
+                  });
               });
             };
           };

@@ -144,7 +144,7 @@ compileHaskell files verbosity = do
     return ( relayedArguments ( commandLineArguments \\ files ) )
 
   targets <-
-    traverse ( \filePath -> GHC.guessTarget filePath Nothing ) files
+    traverse ( \filePath -> GHC.guessTarget filePath Nothing Nothing ) files
 
   GHC.setTargets targets
 
@@ -165,7 +165,7 @@ compileHaskell files verbosity = do
     fmap concat do
       for stronglyConnectedComponents \case
 #if MIN_VERSION_ghc(9, 0, 0)
-        AcyclicSCC ( GHC.ModuleNode ( GHC.ExtendedModSummary{ GHC.emsModSummary = ms@GHC.ModSummary{ GHC.ms_location = GHC.ModLocation{ GHC.ml_hs_file = Just srcFile } } } ) ) -> do
+        AcyclicSCC ( GHC.ModuleNode _ ( ms@GHC.ModSummary{ GHC.ms_location = GHC.ModLocation{ GHC.ml_hs_file = Just srcFile } } ) ) -> do
 #else
         AcyclicSCC ms@GHC.ModSummary{ GHC.ms_location = GHC.ModLocation{ GHC.ml_hs_file = Just srcFile } } -> do
 #endif
