@@ -411,6 +411,7 @@ nixBuildHaskell ghcOptions dependencyGraph verbosity packageDbs exeModuleName ho
             "nix"
             ( [ "--extra-experimental-features", "nix-command"
               , "build"
+              , "--impure"
               , "-f", fromString hsBuilder
               , "--substituters", Maybe.fromMaybe "" mNixSubstituters -- we could use builtin substituters, but they could be slow
               , "--argstr", "jsonArgsFile", fromString ( Turtle.encodeString jsonFile )
